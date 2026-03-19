@@ -1,0 +1,57 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:futela_test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
+
+  flyway:
+    enabled: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  cache:
+    type: none
+
+jwt:
+  secret: futela-test-secret-key-that-is-at-least-256-bits-long-for-hmac-sha-testing
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000
+
+cors:
+  allowed-origins: http://localhost:3000
+
+flexpay:
+  base-url: https://backend.flexpay.cd/api/rest/v1
+  merchant: test-merchant
+  api-key: test-api-key
+  callback-url: http://localhost:8080/callback
+
+cloudinary:
+  cloud-name: test
+  api-key: test
+  api-secret: test
+
+scheduler:
+  rent-invoice: "0 0 0 1 * *"
+  rent-reminder: "0 0 8 * * *"
+  overdue-payment: "0 0 1 * * *"
+  flexpay-sync-ms: 300000
+  cleanup-pending: "0 0 2 * * *"
+
+logging:
+  level:
+    com.futela.api: WARN
