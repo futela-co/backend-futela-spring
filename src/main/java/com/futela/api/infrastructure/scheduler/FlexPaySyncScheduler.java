@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -29,6 +30,7 @@ public class FlexPaySyncScheduler {
     }
 
     @Scheduled(fixedRateString = "${scheduler.flexpay-sync-ms:300000}")
+    @Transactional
     public void syncPendingTransactions() {
         log.info("[Scheduler] Syncing pending FlexPay transactions...");
 

@@ -20,4 +20,6 @@ public interface UserRepositoryPort {
     User save(User user);
 
     void updateLastLogin(UUID userId);
+
+    long countActive();
 }

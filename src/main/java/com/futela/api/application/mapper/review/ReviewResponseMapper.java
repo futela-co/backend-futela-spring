@@ -19,6 +19,7 @@ public final class ReviewResponseMapper {
                 entity.isApproved(),
                 entity.isFlagged(),
                 entity.getFlagReason(),
+                entity.getOwnerResponse(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );

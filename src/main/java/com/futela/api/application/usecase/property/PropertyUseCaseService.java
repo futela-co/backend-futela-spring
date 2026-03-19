@@ -13,7 +13,7 @@ import com.futela.api.infrastructure.persistence.adapter.property.PropertyReposi
 import com.futela.api.infrastructure.persistence.entity.address.AddressEntity;
 import com.futela.api.infrastructure.persistence.entity.core.CompanyEntity;
 import com.futela.api.infrastructure.persistence.entity.property.*;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.mapper.property.PropertyPersistenceMapper;
 import com.futela.api.infrastructure.persistence.repository.property.JpaCategoryRepository;
 import jakarta.persistence.EntityManager;
@@ -75,7 +75,7 @@ public class PropertyUseCaseService {
         }
 
         if (request.attributes() != null) {
-            entity.setAttributes(request.attributes());
+            entity.setAttributes(PropertyPersistenceMapper.mapToJsonNode(request.attributes()));
         }
 
         var saved = propertyRepository.saveEntity(entity);
@@ -123,7 +123,7 @@ public class PropertyUseCaseService {
         }
 
         if (request.attributes() != null) {
-            entity.setAttributes(request.attributes());
+            entity.setAttributes(PropertyPersistenceMapper.mapToJsonNode(request.attributes()));
         }
 
         var saved = propertyRepository.saveEntity(entity);
@@ -192,6 +192,37 @@ public class PropertyUseCaseService {
         entity.setStatus(PropertyStatus.DRAFT);
         var saved = propertyRepository.saveEntity(entity);
         return PropertyResponse.fromDomain(PropertyPersistenceMapper.toDomain(saved));
+    }
+
+    public void softDeleteProperty(UUID id, UUID ownerId) {
+        var entity = propertyRepository.findEntityById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Propriété", id.toString()));
+
+        if (!entity.getOwner().getId().equals(ownerId)) {
+            throw new InvalidOperationException("Vous n'êtes pas le propriétaire de cette propriété");
+        }
+
+        entity.softDelete();
+        entity.setPublished(false);
+        entity.setActive(false);
+        propertyRepository.saveEntity(entity);
+    }
+
+    public void restoreProperty(UUID id, UUID ownerId) {
+        var entity = propertyRepository.findEntityByIdIncludingDeleted(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Propriété", id.toString()));
+
+        if (!entity.isDeleted()) {
+            throw new InvalidOperationException("Cette propriété n'est pas supprimée");
+        }
+
+        if (!entity.getOwner().getId().equals(ownerId)) {
+            throw new InvalidOperationException("Vous n'êtes pas le propriétaire de cette propriété");
+        }
+
+        entity.restore();
+        entity.setActive(true);
+        propertyRepository.saveEntity(entity);
     }
 
     private String generateSlug(String title) {

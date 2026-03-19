@@ -17,4 +17,6 @@ public interface TransactionRepositoryPort {
     List<Transaction> findByStatus(TransactionStatus status);
     List<Transaction> findPendingBefore(Instant cutoff);
     List<Transaction> findByUserIdAndStatus(UUID userId, TransactionStatus status);
+
+    long countActive();
 }

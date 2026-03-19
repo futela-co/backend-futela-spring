@@ -19,4 +19,8 @@ public interface ReviewRepositoryPort {
     boolean existsByUserIdAndPropertyId(UUID userId, UUID propertyId);
 
     void softDelete(UUID id);
+
+    long countActive();
+
+    long countPending();
 }

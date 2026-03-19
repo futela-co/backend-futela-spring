@@ -5,6 +5,7 @@ import com.futela.api.domain.enums.UserStatus;
 import com.futela.api.domain.model.auth.User;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public record UserResponse(
@@ -16,6 +17,7 @@ public record UserResponse(
         String phone,
         String avatar,
         UserRole role,
+        List<String> roles,
         UserStatus status,
         boolean isVerified,
         boolean isAvailable,
@@ -28,6 +30,7 @@ public record UserResponse(
         Instant updatedAt
 ) {
     public static UserResponse fromDomain(User user) {
+        List<String> roles = List.of("ROLE_" + user.role().name());
         return new UserResponse(
                 user.id(),
                 user.email(),
@@ -37,6 +40,7 @@ public record UserResponse(
                 user.phone(),
                 user.avatar(),
                 user.role(),
+                roles,
                 user.status(),
                 user.isVerified(),
                 user.isAvailable(),

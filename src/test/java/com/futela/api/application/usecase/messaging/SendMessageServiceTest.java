@@ -9,7 +9,7 @@ import com.futela.api.domain.exception.ResourceNotFoundException;
 import com.futela.api.infrastructure.persistence.entity.core.CompanyEntity;
 import com.futela.api.infrastructure.persistence.entity.messaging.ConversationEntity;
 import com.futela.api.infrastructure.persistence.entity.messaging.MessageEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaConversationRepository;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaMessageRepository;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaNotificationRepository;

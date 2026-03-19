@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -25,6 +26,7 @@ public class RentInvoiceScheduler {
     }
 
     @Scheduled(cron = "${scheduler.rent-invoice:0 0 0 1 * *}")
+    @Transactional
     public void generateMonthlyInvoices() {
         log.info("[Scheduler] Generating monthly rent invoices...");
         var now = LocalDate.now();

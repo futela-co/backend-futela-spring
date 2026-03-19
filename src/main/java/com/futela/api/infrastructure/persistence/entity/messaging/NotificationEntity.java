@@ -4,7 +4,7 @@ import com.futela.api.domain.enums.NotificationChannel;
 import com.futela.api.domain.enums.NotificationStatus;
 import com.futela.api.domain.enums.NotificationType;
 import com.futela.api.infrastructure.persistence.entity.common.TenantAwareEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +12,10 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -54,7 +55,7 @@ public class NotificationEntity extends TenantAwareEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private Map<String, Object> data = new HashMap<>();
+    private JsonNode data = JsonNodeFactory.instance.objectNode();
 
     @Column(name = "related_entity_id")
     private UUID relatedEntityId;

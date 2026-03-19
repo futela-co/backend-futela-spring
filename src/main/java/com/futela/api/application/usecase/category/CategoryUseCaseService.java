@@ -54,6 +54,12 @@ public class CategoryUseCaseService {
         return CategoryResponse.fromDomain(categoryRepository.save(updated));
     }
 
+    public void deleteCategory(UUID id) {
+        categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Catégorie", id.toString()));
+        categoryRepository.softDelete(id);
+    }
+
     private String generateSlug(String text) {
         String base = text.toLowerCase()
                 .replaceAll("[^a-z0-9]+", "-")

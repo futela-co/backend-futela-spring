@@ -83,6 +83,11 @@ public class LeaseRepositoryAdapter implements LeaseRepositoryPort {
         return jpaRepository.countByLandlordIdAndStatusAndDeletedAtIsNull(landlordId, LeaseStatus.ACTIVE);
     }
 
+    @Override
+    public long countActive() {
+        return jpaRepository.countByDeletedAtIsNull();
+    }
+
     private void updateEntity(LeaseEntity entity, Lease lease) {
         entity.setStatus(lease.status());
         entity.setMonthlyRent(lease.monthlyRent());

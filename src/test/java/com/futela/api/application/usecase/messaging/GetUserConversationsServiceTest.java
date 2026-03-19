@@ -3,7 +3,7 @@ package com.futela.api.application.usecase.messaging;
 import com.futela.api.application.dto.response.messaging.ConversationResponse;
 import com.futela.api.infrastructure.persistence.entity.core.CompanyEntity;
 import com.futela.api.infrastructure.persistence.entity.messaging.ConversationEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaConversationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

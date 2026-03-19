@@ -7,6 +7,7 @@ import com.futela.api.application.dto.response.messaging.ContactResponse;
 import com.futela.api.application.usecase.messaging.GetContactByIdService;
 import com.futela.api.application.usecase.messaging.GetContactSubmissionsService;
 import com.futela.api.application.usecase.messaging.RespondToContactService;
+import com.futela.api.application.service.SecurityService;
 import com.futela.api.application.usecase.messaging.SubmitContactFormService;
 import com.futela.api.domain.enums.ContactStatus;
 import jakarta.validation.Valid;
@@ -17,8 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -27,6 +26,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ContactController {
 
+    private final SecurityService securityService;
     private final SubmitContactFormService submitContactFormService;
     private final GetContactSubmissionsService getContactSubmissionsService;
     private final GetContactByIdService getContactByIdService;
@@ -59,9 +59,8 @@ public class ContactController {
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ContactResponse> respondToContact(
             @PathVariable UUID id,
-            @Valid @RequestBody RespondToContactRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        UUID adminId = UUID.fromString(userDetails.getUsername());
+            @Valid @RequestBody RespondToContactRequest request) {
+        UUID adminId = securityService.getCurrentUserId();
         return ApiResponse.success(respondToContactService.execute(id, request, adminId), "Réponse envoyée");
     }
 }

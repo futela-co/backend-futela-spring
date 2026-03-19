@@ -4,7 +4,7 @@ import com.futela.api.domain.event.ReviewFlaggedEvent;
 import com.futela.api.domain.exception.ResourceNotFoundException;
 import com.futela.api.infrastructure.persistence.entity.property.PropertyEntity;
 import com.futela.api.infrastructure.persistence.entity.review.ReviewEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.repository.review.JpaReviewRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

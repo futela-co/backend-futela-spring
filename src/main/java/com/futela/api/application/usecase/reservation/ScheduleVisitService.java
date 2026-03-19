@@ -9,7 +9,7 @@ import com.futela.api.domain.exception.ResourceNotFoundException;
 import com.futela.api.domain.port.in.reservation.ScheduleVisitUseCase;
 import com.futela.api.infrastructure.persistence.entity.property.PropertyEntity;
 import com.futela.api.infrastructure.persistence.entity.reservation.VisitEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.repository.reservation.JpaVisitRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;

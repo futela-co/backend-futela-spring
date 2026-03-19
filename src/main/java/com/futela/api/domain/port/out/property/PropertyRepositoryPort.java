@@ -13,4 +13,6 @@ public interface PropertyRepositoryPort {
     PageResult<Property> findByOwnerId(UUID ownerId, int page, int size);
     PageResult<Property> search(PropertySearchCriteria criteria);
     void softDelete(UUID id);
+
+    long countActive();
 }

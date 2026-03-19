@@ -2,7 +2,7 @@ package com.futela.api.infrastructure.persistence.entity.messaging;
 
 import com.futela.api.domain.enums.MessageType;
 import com.futela.api.infrastructure.persistence.entity.common.TenantAwareEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

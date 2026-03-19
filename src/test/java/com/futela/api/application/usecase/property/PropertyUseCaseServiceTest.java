@@ -13,7 +13,7 @@ import com.futela.api.infrastructure.persistence.adapter.property.PropertyReposi
 import com.futela.api.infrastructure.persistence.entity.address.AddressEntity;
 import com.futela.api.infrastructure.persistence.entity.core.CompanyEntity;
 import com.futela.api.infrastructure.persistence.entity.property.*;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.repository.property.JpaCategoryRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;

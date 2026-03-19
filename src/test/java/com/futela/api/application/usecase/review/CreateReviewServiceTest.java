@@ -6,7 +6,7 @@ import com.futela.api.domain.exception.InvalidOperationException;
 import com.futela.api.domain.exception.ResourceNotFoundException;
 import com.futela.api.domain.exception.ValidationException;
 import com.futela.api.infrastructure.persistence.entity.property.PropertyEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.repository.review.JpaReviewRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;

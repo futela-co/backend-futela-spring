@@ -14,6 +14,9 @@ DO $$ BEGIN PERFORM dblink_connect('src', 'dbname=futela_db host=127.0.0.1 port=
 -- Disable FK constraints for bulk insert
 SET session_replication_role = 'replica';
 
+-- 0. CLEAN seeded data from V002/V006/V009 to avoid unique constraint conflicts
+TRUNCATE addresses, districts, towns, cities, provinces, countries, currencies, payment_methods, companies, platform_settings CASCADE;
+
 -- 1. COMPANIES (company -> companies): code -> slug
 INSERT INTO companies (id, name, slug, email, phone, logo, is_active, created_at, updated_at, deleted_at)
 SELECT id, name, code, email, phone, logo, is_active,

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -28,6 +29,7 @@ public class OverduePaymentScheduler {
     }
 
     @Scheduled(cron = "${scheduler.overdue-payment:0 0 1 * * *}")
+    @Transactional
     public void detectOverduePayments() {
         log.info("[Scheduler] Detecting overdue payments...");
         var overdueInvoices = invoiceRepository.findOverdue();

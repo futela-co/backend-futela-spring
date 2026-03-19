@@ -6,7 +6,7 @@ import com.futela.api.domain.event.ConversationCreatedEvent;
 import com.futela.api.domain.exception.ResourceNotFoundException;
 import com.futela.api.domain.port.in.messaging.CreateConversationUseCase;
 import com.futela.api.infrastructure.persistence.entity.messaging.ConversationEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.mapper.messaging.ConversationPersistenceMapper;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaConversationRepository;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaMessageRepository;
@@ -57,7 +57,9 @@ public class CreateConversationService implements CreateConversationUseCase {
         // Create new conversation
         ConversationEntity entity = new ConversationEntity();
         entity.setSubject(request.subject());
-        entity.setPropertyId(propertyId);
+        if (propertyId != null) {
+            entity.setProperty(entityManager.getReference(com.futela.api.infrastructure.persistence.entity.property.PropertyEntity.class, propertyId));
+        }
         entity.setArchived(false);
         entity.setCompany(participant1.getCompany());
         entity.getParticipants().add(participant1);

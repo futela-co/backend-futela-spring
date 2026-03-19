@@ -14,6 +14,7 @@ public record ReviewResponse(
         boolean isApproved,
         boolean isFlagged,
         String flagReason,
+        String ownerResponse,
         Instant createdAt,
         Instant updatedAt
 ) {}

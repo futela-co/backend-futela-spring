@@ -12,7 +12,7 @@ import com.futela.api.domain.port.in.messaging.SendMessageUseCase;
 import com.futela.api.infrastructure.persistence.entity.messaging.ConversationEntity;
 import com.futela.api.infrastructure.persistence.entity.messaging.MessageEntity;
 import com.futela.api.infrastructure.persistence.entity.messaging.NotificationEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.mapper.messaging.MessagePersistenceMapper;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaConversationRepository;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaMessageRepository;
@@ -22,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.futela.api.infrastructure.persistence.mapper.property.PropertyPersistenceMapper;
 
 import jakarta.persistence.EntityManager;
 import java.time.Instant;
@@ -125,7 +127,7 @@ public class SendMessageService implements SendMessageUseCase {
             data.put("conversation_id", conversation.getId().toString());
             data.put("sender_id", sender.getId().toString());
             data.put("sender_name", sender.getFirstName() + " " + sender.getLastName());
-            notification.setData(data);
+            notification.setData(PropertyPersistenceMapper.mapToJsonNode(data));
 
             notificationRepository.save(notification);
         }

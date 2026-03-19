@@ -2,6 +2,7 @@ package com.futela.api.infrastructure.persistence.entity.messaging;
 
 import com.futela.api.domain.enums.ContactStatus;
 import com.futela.api.infrastructure.persistence.entity.common.BaseEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,6 +52,10 @@ public class ContactEntity extends BaseEntity {
 
     @Column(name = "responded_by")
     private UUID respondedBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_to")
+    private UserEntity assignedTo;
 
     @Column(name = "ip_address", length = 45)
     private String ipAddress;

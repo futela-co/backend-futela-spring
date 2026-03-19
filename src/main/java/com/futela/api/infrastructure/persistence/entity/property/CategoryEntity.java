@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "categories")
 @Getter
@@ -25,4 +28,7 @@ public class CategoryEntity extends TenantAwareEntity {
 
     @Column(nullable = false)
     private boolean isActive = true;
+
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private List<PropertyEntity> properties = new ArrayList<>();
 }

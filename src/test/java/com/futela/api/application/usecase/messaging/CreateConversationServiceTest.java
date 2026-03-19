@@ -6,7 +6,8 @@ import com.futela.api.domain.event.ConversationCreatedEvent;
 import com.futela.api.domain.exception.ResourceNotFoundException;
 import com.futela.api.infrastructure.persistence.entity.core.CompanyEntity;
 import com.futela.api.infrastructure.persistence.entity.messaging.ConversationEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.property.PropertyEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaConversationRepository;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaMessageRepository;
 import jakarta.persistence.EntityManager;
@@ -131,6 +132,10 @@ class CreateConversationServiceTest {
         when(entityManager.getReference(UserEntity.class, currentUserId)).thenReturn(participant1);
         when(entityManager.find(UserEntity.class, participant2Id)).thenReturn(participant2);
 
+        PropertyEntity propertyRef = mock(PropertyEntity.class);
+        when(propertyRef.getId()).thenReturn(propertyId);
+        when(entityManager.getReference(PropertyEntity.class, propertyId)).thenReturn(propertyRef);
+
         ArgumentCaptor<ConversationEntity> captor = ArgumentCaptor.forClass(ConversationEntity.class);
         when(conversationRepository.save(captor.capture())).thenAnswer(invocation -> {
             ConversationEntity entity = invocation.getArgument(0);
@@ -141,7 +146,8 @@ class CreateConversationServiceTest {
 
         service.execute(request, currentUserId);
 
-        assertThat(captor.getValue().getPropertyId()).isEqualTo(propertyId);
+        assertThat(captor.getValue().getProperty()).isNotNull();
+        assertThat(captor.getValue().getProperty().getId()).isEqualTo(propertyId);
     }
 
     @Test
