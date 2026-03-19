@@ -20,10 +20,10 @@ public class AddressEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String additionalInfo;
 
-    @Column(precision = 10, scale = 8)
+    @Column(columnDefinition = "NUMERIC(10,8)")
     private Double latitude;
 
-    @Column(precision = 11, scale = 8)
+    @Column(columnDefinition = "NUMERIC(11,8)")
     private Double longitude;
 
     @ManyToOne(fetch = FetchType.LAZY)

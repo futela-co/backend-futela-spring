@@ -29,4 +29,7 @@ public class TownEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "town", fetch = FetchType.LAZY)
     private List<DistrictEntity> districts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "town", fetch = FetchType.LAZY)
+    private List<AddressEntity> addresses = new ArrayList<>();
 }

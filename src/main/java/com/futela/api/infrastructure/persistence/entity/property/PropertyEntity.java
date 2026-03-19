@@ -3,18 +3,19 @@ package com.futela.api.infrastructure.persistence.entity.property;
 import com.futela.api.domain.enums.*;
 import com.futela.api.infrastructure.persistence.entity.address.AddressEntity;
 import com.futela.api.infrastructure.persistence.entity.common.TenantAwareEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(name = "properties")
@@ -62,7 +63,7 @@ public abstract class PropertyEntity extends TenantAwareEntity {
     @Column(name = "view_count", nullable = false)
     private int viewCount = 0;
 
-    @Column(precision = 3, scale = 2)
+    @Column
     private Double rating;
 
     @Column(name = "review_count", nullable = false)
@@ -84,7 +85,7 @@ public abstract class PropertyEntity extends TenantAwareEntity {
     // JSON attributes for type-specific non-filtered fields
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "attributes", columnDefinition = "jsonb")
-    private Map<String, Object> attributes = new HashMap<>();
+    private JsonNode attributes = JsonNodeFactory.instance.objectNode();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)

@@ -3,7 +3,7 @@ package com.futela.api.infrastructure.persistence.entity.rent;
 import com.futela.api.domain.enums.LeaseStatus;
 import com.futela.api.infrastructure.persistence.entity.common.TenantAwareEntity;
 import com.futela.api.infrastructure.persistence.entity.property.PropertyEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

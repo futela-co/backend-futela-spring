@@ -1,7 +1,8 @@
 package com.futela.api.infrastructure.persistence.entity.messaging;
 
 import com.futela.api.infrastructure.persistence.entity.common.TenantAwareEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.property.PropertyEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,6 @@ import lombok.Setter;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "conversations")
@@ -30,8 +30,9 @@ public class ConversationEntity extends TenantAwareEntity {
     )
     private Set<UserEntity> participants = new HashSet<>();
 
-    @Column(name = "property_id")
-    private UUID propertyId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "property_id")
+    private PropertyEntity property;
 
     @Column(name = "last_message_at")
     private Instant lastMessageAt;

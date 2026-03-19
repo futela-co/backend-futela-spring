@@ -3,17 +3,18 @@ package com.futela.api.infrastructure.persistence.entity.payment;
 import com.futela.api.domain.enums.TransactionStatus;
 import com.futela.api.domain.enums.TransactionType;
 import com.futela.api.infrastructure.persistence.entity.common.TenantAwareEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 @Table(name = "transactions", indexes = {
@@ -61,7 +62,7 @@ public class TransactionEntity extends TenantAwareEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private Map<String, Object> metadata = new HashMap<>();
+    private JsonNode metadata = JsonNodeFactory.instance.objectNode();
 
     @Column(columnDefinition = "text")
     private String failureReason;
