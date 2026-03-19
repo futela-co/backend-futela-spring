@@ -2,6 +2,8 @@ package com.futela.api.presentation.controller.review;
 
 import com.futela.api.application.dto.request.review.CreateReviewRequest;
 import com.futela.api.application.dto.request.review.FlagReviewRequest;
+import com.futela.api.application.dto.request.review.RespondToReviewRequest;
+import com.futela.api.application.dto.request.review.UpdateReviewRequest;
 import com.futela.api.application.dto.response.common.ApiResponse;
 import com.futela.api.application.dto.response.review.ReviewResponse;
 import com.futela.api.application.service.SecurityService;
@@ -10,6 +12,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,11 +30,29 @@ public class ReviewController {
     private final CreateReviewUseCase createReviewUseCase;
     private final GetReviewByIdUseCase getReviewByIdUseCase;
     private final GetPropertyReviewsUseCase getPropertyReviewsUseCase;
+    private final GetApprovedReviewsUseCase getApprovedReviewsUseCase;
+    private final GetPendingReviewsUseCase getPendingReviewsUseCase;
+    private final UpdateReviewUseCase updateReviewUseCase;
     private final DeleteReviewUseCase deleteReviewUseCase;
     private final ApproveReviewUseCase approveReviewUseCase;
     private final RejectReviewUseCase rejectReviewUseCase;
     private final FlagReviewUseCase flagReviewUseCase;
+    private final RespondToReviewUseCase respondToReviewUseCase;
     private final SecurityService securityService;
+
+    @GetMapping("/api/reviews")
+    @Operation(summary = "Liste des avis approuvés (paginée)")
+    public ApiResponse<Page<ReviewResponse>> getApprovedReviews(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ApiResponse.success(getApprovedReviewsUseCase.execute(pageable));
+    }
+
+    @GetMapping("/api/reviews/pending")
+    @Operation(summary = "Liste des avis en attente de modération (paginée)")
+    public ApiResponse<Page<ReviewResponse>> getPendingReviews(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ApiResponse.success(getPendingReviewsUseCase.execute(pageable));
+    }
 
     @PostMapping("/api/reviews")
     @ResponseStatus(HttpStatus.CREATED)
@@ -51,6 +75,16 @@ public class ReviewController {
     public ApiResponse<List<ReviewResponse>> getPropertyReviews(@PathVariable UUID propertyId) {
         List<ReviewResponse> responses = getPropertyReviewsUseCase.execute(propertyId);
         return ApiResponse.success(responses);
+    }
+
+    @PutMapping("/api/reviews/{id}")
+    @Operation(summary = "Modifier un avis (auteur uniquement)")
+    public ApiResponse<ReviewResponse> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateReviewRequest request) {
+        UUID currentUserId = securityService.getCurrentUserId();
+        ReviewResponse response = updateReviewUseCase.execute(id, request, currentUserId);
+        return ApiResponse.success(response, "Avis modifié avec succès");
     }
 
     @DeleteMapping("/api/reviews/{id}")
@@ -83,5 +117,15 @@ public class ReviewController {
     ) {
         ReviewResponse response = flagReviewUseCase.execute(id, request.reason());
         return ApiResponse.success(response, "Avis signalé avec succès");
+    }
+
+    @PostMapping("/api/reviews/{id}/respond")
+    @Operation(summary = "Répondre à un avis (propriétaire uniquement)")
+    public ApiResponse<ReviewResponse> respond(
+            @PathVariable UUID id,
+            @Valid @RequestBody RespondToReviewRequest request) {
+        UUID currentUserId = securityService.getCurrentUserId();
+        ReviewResponse response = respondToReviewUseCase.execute(id, request.response(), currentUserId);
+        return ApiResponse.success(response, "Réponse ajoutée avec succès");
     }
 }
