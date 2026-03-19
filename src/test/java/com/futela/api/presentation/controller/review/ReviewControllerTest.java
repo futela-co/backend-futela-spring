@@ -136,7 +136,7 @@ class ReviewControllerTest {
         mockMvc.perform(post("/api/reviews/{id}/approve", reviewId)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -159,7 +159,7 @@ class ReviewControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
-                .andExpect(status().isCreated())
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -172,7 +172,7 @@ class ReviewControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"reason\": \"Contenu inapproprié\"}"))
-                .andExpect(status().isOk())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -184,6 +184,6 @@ class ReviewControllerTest {
         mockMvc.perform(post("/api/reviews/{id}/reject", reviewId)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isOk());
     }
 }

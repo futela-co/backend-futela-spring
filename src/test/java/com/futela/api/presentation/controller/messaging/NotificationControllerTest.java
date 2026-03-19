@@ -66,7 +66,7 @@ class NotificationControllerTest {
     @Test
     @DisplayName("PATCH /api/notifications/mark-all-read sans token retourne 403 Forbidden")
     void shouldReturn403WhenMarkingAllAsReadWithoutAuth() throws Exception {
-        mockMvc.perform(post("/api/notifications/mark-all-read"))
+        mockMvc.perform(patch("/api/notifications/mark-all-read"))
                 .andExpect(status().isForbidden());
     }
 

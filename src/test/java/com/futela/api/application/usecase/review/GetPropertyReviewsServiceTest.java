@@ -3,7 +3,7 @@ package com.futela.api.application.usecase.review;
 import com.futela.api.application.dto.response.review.ReviewResponse;
 import com.futela.api.infrastructure.persistence.entity.property.PropertyEntity;
 import com.futela.api.infrastructure.persistence.entity.review.ReviewEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.repository.review.JpaReviewRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

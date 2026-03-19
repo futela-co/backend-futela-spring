@@ -5,7 +5,7 @@ import com.futela.api.domain.exception.InvalidOperationException;
 import com.futela.api.domain.exception.ResourceNotFoundException;
 import com.futela.api.infrastructure.persistence.entity.core.CompanyEntity;
 import com.futela.api.infrastructure.persistence.entity.messaging.ConversationEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaConversationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
