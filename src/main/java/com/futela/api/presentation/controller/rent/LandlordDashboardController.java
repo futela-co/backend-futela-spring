@@ -2,49 +2,63 @@ package com.futela.api.presentation.controller.rent;
 
 import com.futela.api.application.dto.response.common.ApiResponse;
 import com.futela.api.application.dto.response.rent.*;
+import com.futela.api.application.service.SecurityService;
 import com.futela.api.domain.port.in.rent.*;
+import com.futela.api.domain.port.out.rent.RentPaymentRepositoryPort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/landlord")
+@RequiredArgsConstructor
 public class LandlordDashboardController {
 
+    private final SecurityService securityService;
     private final GetLandlordDashboardUseCase dashboardUseCase;
     private final GetMonthlyIncomeReportUseCase monthlyIncomeUseCase;
     private final GetOverduePaymentsUseCase overdueUseCase;
     private final GetPendingPaymentsUseCase pendingUseCase;
-
-    public LandlordDashboardController(GetLandlordDashboardUseCase dashboardUseCase,
-                                       GetMonthlyIncomeReportUseCase monthlyIncomeUseCase,
-                                       GetOverduePaymentsUseCase overdueUseCase,
-                                       GetPendingPaymentsUseCase pendingUseCase) {
-        this.dashboardUseCase = dashboardUseCase;
-        this.monthlyIncomeUseCase = monthlyIncomeUseCase;
-        this.overdueUseCase = overdueUseCase;
-        this.pendingUseCase = pendingUseCase;
-    }
+    private final GetLandlordLeasesUseCase leasesUseCase;
+    private final GetLandlordTenantsUseCase tenantsUseCase;
+    private final RentPaymentRepositoryPort paymentRepository;
 
     @GetMapping("/dashboard")
-    public ApiResponse<LandlordDashboardResponse> getDashboard(@RequestParam UUID landlordId) {
-        return ApiResponse.success(dashboardUseCase.execute(landlordId));
+    public ApiResponse<LandlordDashboardResponse> getDashboard() {
+        return ApiResponse.success(dashboardUseCase.execute(securityService.getCurrentUserId()));
     }
 
     @GetMapping("/income/monthly")
-    public ApiResponse<MonthlyIncomeResponse> getMonthlyIncome(@RequestParam UUID landlordId,
-                                                                @RequestParam int year) {
-        return ApiResponse.success(monthlyIncomeUseCase.execute(landlordId, year));
+    public ApiResponse<MonthlyIncomeResponse> getMonthlyIncome(@RequestParam int year) {
+        return ApiResponse.success(monthlyIncomeUseCase.execute(securityService.getCurrentUserId(), year));
     }
 
     @GetMapping("/payments/overdue")
-    public ApiResponse<List<RentInvoiceResponse>> getOverdue(@RequestParam UUID landlordId) {
-        return ApiResponse.success(overdueUseCase.execute(landlordId));
+    public ApiResponse<List<RentInvoiceResponse>> getOverdue() {
+        return ApiResponse.success(overdueUseCase.execute(securityService.getCurrentUserId()));
     }
 
     @GetMapping("/payments/pending")
-    public ApiResponse<List<RentInvoiceResponse>> getPending(@RequestParam UUID landlordId) {
-        return ApiResponse.success(pendingUseCase.execute(landlordId));
+    public ApiResponse<List<RentInvoiceResponse>> getPending() {
+        return ApiResponse.success(pendingUseCase.execute(securityService.getCurrentUserId()));
+    }
+
+    @GetMapping("/leases")
+    public ApiResponse<List<LeaseResponse>> getLeases() {
+        return ApiResponse.success(leasesUseCase.execute(securityService.getCurrentUserId()));
+    }
+
+    @GetMapping("/tenants")
+    public ApiResponse<List<TenantSummaryResponse>> getTenants() {
+        return ApiResponse.success(tenantsUseCase.execute(securityService.getCurrentUserId()));
+    }
+
+    @GetMapping("/income/yearly")
+    public ApiResponse<YearlyIncomeResponse> getYearlyIncome(@RequestParam int year) {
+        BigDecimal totalIncome = paymentRepository.sumByLandlordIdAndYear(
+                securityService.getCurrentUserId(), year);
+        return ApiResponse.success(new YearlyIncomeResponse(year, totalIncome));
     }
 }
