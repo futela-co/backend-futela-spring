@@ -485,7 +485,72 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-### 7. SSL avec Let's Encrypt
+### 6b. Alternative : Caddy (reverse proxy + SSL automatique)
+
+Caddy est plus simple que Nginx — SSL automatique sans Certbot.
+
+```bash
+# Installer Caddy
+sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update
+sudo apt install -y caddy
+```
+
+Créer le Caddyfile :
+
+```bash
+sudo nano /etc/caddy/Caddyfile
+```
+
+```caddyfile
+api.futela.com {
+    # SSL automatique (Let's Encrypt) - rien à configurer !
+
+    # Security headers
+    header {
+        X-Frame-Options DENY
+        X-Content-Type-Options nosniff
+        X-XSS-Protection "1; mode=block"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        -Server
+    }
+
+    # Max upload size (photos)
+    request_body {
+        max_size 10MB
+    }
+
+    # Block Swagger in production
+    respond /swagger-ui* 404
+
+    # Proxy to Spring Boot
+    reverse_proxy localhost:8001 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+
+        # Health check
+        health_uri /actuator/health
+        health_interval 30s
+        health_timeout 5s
+    }
+}
+```
+
+```bash
+# Démarrer Caddy
+sudo systemctl enable caddy
+sudo systemctl start caddy
+
+# Vérifier
+sudo systemctl status caddy
+curl https://api.futela.com/actuator/health
+```
+
+> Caddy gère le SSL automatiquement — pas besoin de Certbot ni de renouvellement manuel.
+
+### 7. SSL avec Let's Encrypt (si Nginx)
 
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
