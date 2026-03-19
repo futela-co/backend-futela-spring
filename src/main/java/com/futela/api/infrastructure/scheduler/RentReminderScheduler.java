@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -29,6 +30,7 @@ public class RentReminderScheduler {
     }
 
     @Scheduled(cron = "${scheduler.rent-reminder:0 0 8 * * *}")
+    @Transactional
     public void sendReminders() {
         log.info("[Scheduler] Sending rent reminders...");
         LocalDate today = LocalDate.now();
