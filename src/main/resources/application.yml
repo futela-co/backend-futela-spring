@@ -1,0 +1,102 @@
+server:
+  port: 8001
+
+spring:
+  application:
+    name: futela-api
+
+  jackson:
+    property-naming-strategy: LOWER_CAMEL_CASE
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:futela_db}
+    username: ${DB_USERNAME:futela}
+    password: ${DB_PASSWORD:futela}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: public
+        jdbc:
+          time_zone: UTC
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:futela-super-secret-key-change-in-production-minimum-256-bits-long}
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000
+
+# CORS
+cors:
+  allowed-origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:3006,http://localhost:3007,http://localhost:5173}
+  exposed-headers: X-Token-Refreshed,X-New-Access-Token,X-New-Refresh-Token
+
+# FlexPay
+flexpay:
+  base-url: ${FLEXPAY_BASE_URL:https://backend.flexpay.cd/api/rest/v1}
+  merchant: ${FLEXPAY_MERCHANT:}
+  api-key: ${FLEXPAY_API_KEY:}
+  callback-url: ${FLEXPAY_CALLBACK_URL:}
+
+# Cloudinary
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+  api-key: ${CLOUDINARY_API_KEY:}
+  api-secret: ${CLOUDINARY_API_SECRET:}
+
+# OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+# Scheduler
+scheduler:
+  rent-invoice: "0 0 0 1 * *"
+  rent-reminder: "0 0 8 * * *"
+  overdue-payment: "0 0 1 * * *"
+  flexpay-sync-ms: 300000
+  cleanup-pending: "0 0 2 * * *"
+
+# Logging
+logging:
+  level:
+    com.futela.api: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: INFO
