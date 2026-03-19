@@ -26,4 +26,6 @@ public interface JpaUserRepository extends JpaRepository<UserEntity, UUID> {
     @Modifying
     @Query("UPDATE UserEntity u SET u.lastLoginAt = :now, u.updatedAt = :now WHERE u.id = :userId")
     void updateLastLogin(@Param("userId") UUID userId, @Param("now") Instant now);
+
+    long countByDeletedAtIsNull();
 }

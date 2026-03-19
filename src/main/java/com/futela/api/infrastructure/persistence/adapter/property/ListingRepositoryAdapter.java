@@ -5,7 +5,7 @@ import com.futela.api.domain.port.out.property.ListingRepositoryPort;
 import com.futela.api.infrastructure.persistence.entity.core.CompanyEntity;
 import com.futela.api.infrastructure.persistence.entity.property.ListingEntity;
 import com.futela.api.infrastructure.persistence.entity.property.PropertyEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.mapper.property.ListingPersistenceMapper;
 import com.futela.api.infrastructure.persistence.repository.property.JpaListingRepository;
 import jakarta.persistence.EntityManager;

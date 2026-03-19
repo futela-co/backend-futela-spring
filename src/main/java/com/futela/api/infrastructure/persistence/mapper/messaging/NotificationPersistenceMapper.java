@@ -3,6 +3,7 @@ package com.futela.api.infrastructure.persistence.mapper.messaging;
 import com.futela.api.application.dto.response.messaging.NotificationResponse;
 import com.futela.api.domain.model.messaging.Notification;
 import com.futela.api.infrastructure.persistence.entity.messaging.NotificationEntity;
+import com.futela.api.infrastructure.persistence.mapper.property.PropertyPersistenceMapper;
 
 public final class NotificationPersistenceMapper {
 
@@ -18,7 +19,7 @@ public final class NotificationPersistenceMapper {
                 entity.getTitle(),
                 entity.getBody(),
                 entity.getChannel(),
-                entity.getData(),
+                PropertyPersistenceMapper.jsonNodeToMap(entity.getData()),
                 entity.getRelatedEntityId(),
                 entity.getRelatedEntityType(),
                 entity.isRead(),
@@ -39,7 +40,7 @@ public final class NotificationPersistenceMapper {
                 entity.getTitle(),
                 entity.getBody(),
                 entity.getChannel(),
-                entity.getData(),
+                PropertyPersistenceMapper.jsonNodeToMap(entity.getData()),
                 entity.getRelatedEntityId(),
                 entity.getRelatedEntityType(),
                 entity.isRead(),

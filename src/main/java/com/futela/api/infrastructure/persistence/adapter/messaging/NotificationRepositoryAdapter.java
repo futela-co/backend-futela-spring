@@ -6,6 +6,7 @@ import com.futela.api.domain.model.messaging.Notification;
 import com.futela.api.domain.port.out.messaging.NotificationRepositoryPort;
 import com.futela.api.infrastructure.persistence.entity.messaging.NotificationEntity;
 import com.futela.api.infrastructure.persistence.mapper.messaging.NotificationPersistenceMapper;
+import com.futela.api.infrastructure.persistence.mapper.property.PropertyPersistenceMapper;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaNotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,7 +34,7 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
         entity.setTitle(notification.title());
         entity.setBody(notification.body());
         entity.setChannel(notification.channel());
-        entity.setData(notification.data());
+        entity.setData(PropertyPersistenceMapper.mapToJsonNode(notification.data()));
         entity.setRelatedEntityId(notification.relatedEntityId());
         entity.setRelatedEntityType(notification.relatedEntityType());
         entity.setRead(notification.isRead());

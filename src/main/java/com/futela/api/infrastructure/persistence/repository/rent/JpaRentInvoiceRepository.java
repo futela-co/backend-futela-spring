@@ -4,6 +4,7 @@ import com.futela.api.domain.enums.PaymentStatus;
 import com.futela.api.infrastructure.persistence.entity.rent.RentInvoiceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -13,10 +14,11 @@ import java.util.UUID;
 
 @Repository
 public interface JpaRentInvoiceRepository extends JpaRepository<RentInvoiceEntity, UUID> {
-    List<RentInvoiceEntity> findByLeaseIdAndDeletedAtIsNull(UUID leaseId);
+    @Query("SELECT i FROM RentInvoiceEntity i JOIN FETCH i.lease WHERE i.lease.id = :leaseId AND i.deletedAt IS NULL")
+    List<RentInvoiceEntity> findByLeaseIdAndDeletedAtIsNull(@Param("leaseId") UUID leaseId);
 
-    @Query("SELECT i FROM RentInvoiceEntity i WHERE i.lease.id = :leaseId AND i.status IN ('PENDING','OVERDUE','PARTIAL') AND i.deletedAt IS NULL")
-    List<RentInvoiceEntity> findUnpaidByLeaseId(UUID leaseId);
+    @Query("SELECT i FROM RentInvoiceEntity i JOIN FETCH i.lease WHERE i.lease.id = :leaseId AND i.status IN ('PENDING','OVERDUE','PARTIAL') AND i.deletedAt IS NULL")
+    List<RentInvoiceEntity> findUnpaidByLeaseId(@Param("leaseId") UUID leaseId);
 
     List<RentInvoiceEntity> findByStatusAndDeletedAtIsNull(PaymentStatus status);
 
@@ -26,8 +28,8 @@ public interface JpaRentInvoiceRepository extends JpaRepository<RentInvoiceEntit
     @Query("SELECT i FROM RentInvoiceEntity i WHERE i.status = 'PENDING' AND i.dueDate <= :date AND i.deletedAt IS NULL")
     List<RentInvoiceEntity> findPendingBeforeDueDate(LocalDate date);
 
-    @Query("SELECT i FROM RentInvoiceEntity i WHERE i.lease.landlord.id = :landlordId AND i.deletedAt IS NULL")
-    List<RentInvoiceEntity> findByLandlordId(UUID landlordId);
+    @Query("SELECT i FROM RentInvoiceEntity i JOIN FETCH i.lease l JOIN FETCH l.landlord WHERE l.landlord.id = :landlordId AND i.deletedAt IS NULL")
+    List<RentInvoiceEntity> findByLandlordId(@Param("landlordId") UUID landlordId);
 
     Optional<RentInvoiceEntity> findByLeaseIdAndPeriodStartAndPeriodEndAndDeletedAtIsNull(UUID leaseId, LocalDate periodStart, LocalDate periodEnd);
 
@@ -35,4 +37,7 @@ public interface JpaRentInvoiceRepository extends JpaRepository<RentInvoiceEntit
 
     @Query("SELECT COUNT(i) FROM RentInvoiceEntity i WHERE i.lease.landlord.id = :landlordId AND i.status = :status AND i.deletedAt IS NULL")
     long countByLandlordIdAndStatus(UUID landlordId, PaymentStatus status);
+
+    @Query("SELECT i FROM RentInvoiceEntity i JOIN FETCH i.lease l WHERE l.tenant.id = :tenantId AND i.deletedAt IS NULL")
+    List<RentInvoiceEntity> findByTenantId(@Param("tenantId") UUID tenantId);
 }

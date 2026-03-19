@@ -17,4 +17,6 @@ public interface LeaseRepositoryPort {
     List<Lease> findAll();
     long countByLandlordId(UUID landlordId);
     long countActiveByLandlordId(UUID landlordId);
+
+    long countActive();
 }

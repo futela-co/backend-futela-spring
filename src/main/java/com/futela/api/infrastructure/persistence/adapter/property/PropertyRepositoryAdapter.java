@@ -49,6 +49,10 @@ public class PropertyRepositoryAdapter implements PropertyRepositoryPort {
                 .filter(e -> e.getDeletedAt() == null);
     }
 
+    public Optional<PropertyEntity> findEntityByIdIncludingDeleted(UUID id) {
+        return jpaRepository.findByIdIncludingDeleted(id);
+    }
+
     @Override
     public Optional<Property> findBySlug(String slug) {
         return jpaRepository.findBySlugAndDeletedAtIsNull(slug)
@@ -92,5 +96,10 @@ public class PropertyRepositoryAdapter implements PropertyRepositoryPort {
             entity.setActive(false);
             jpaRepository.save(entity);
         });
+    }
+
+    @Override
+    public long countActive() {
+        return jpaRepository.countByDeletedAtIsNull();
     }
 }

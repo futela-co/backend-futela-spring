@@ -60,4 +60,9 @@ public class ReservationRepositoryAdapter implements ReservationRepositoryPort {
     public boolean existsOverlapping(UUID propertyId, LocalDate startDate, LocalDate endDate, UUID excludeId) {
         return jpaRepository.existsOverlapping(propertyId, startDate, endDate, excludeId);
     }
+
+    @Override
+    public long countActive() {
+        return jpaRepository.countByDeletedAtIsNull();
+    }
 }

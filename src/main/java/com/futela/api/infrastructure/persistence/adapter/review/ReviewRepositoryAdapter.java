@@ -67,4 +67,14 @@ public class ReviewRepositoryAdapter implements ReviewRepositoryPort {
             jpaRepository.save(entity);
         });
     }
+
+    @Override
+    public long countActive() {
+        return jpaRepository.countByDeletedAtIsNull();
+    }
+
+    @Override
+    public long countPending() {
+        return jpaRepository.countByIsApprovedFalseAndDeletedAtIsNull();
+    }
 }

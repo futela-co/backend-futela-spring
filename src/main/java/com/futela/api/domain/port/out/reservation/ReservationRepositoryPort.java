@@ -18,4 +18,6 @@ public interface ReservationRepositoryPort {
     List<Reservation> findByUserId(UUID userId);
 
     boolean existsOverlapping(UUID propertyId, LocalDate startDate, LocalDate endDate, UUID excludeId);
+
+    long countActive();
 }

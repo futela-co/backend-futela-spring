@@ -2,6 +2,7 @@ package com.futela.api.infrastructure.persistence.mapper.payment;
 
 import com.futela.api.domain.model.payment.Transaction;
 import com.futela.api.infrastructure.persistence.entity.payment.TransactionEntity;
+import com.futela.api.infrastructure.persistence.mapper.property.PropertyPersistenceMapper;
 
 public final class TransactionMapper {
 
@@ -21,7 +22,7 @@ public final class TransactionMapper {
                 entity.getUser().getId(),
                 entity.getUser().getFirstName() + " " + entity.getUser().getLastName(),
                 entity.getDescription(),
-                entity.getMetadata(),
+                PropertyPersistenceMapper.jsonNodeToMap(entity.getMetadata()),
                 entity.getFailureReason(),
                 entity.getProcessedAt(),
                 entity.getCompany().getId(),

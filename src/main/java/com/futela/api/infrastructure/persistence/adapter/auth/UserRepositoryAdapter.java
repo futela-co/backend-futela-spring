@@ -65,4 +65,9 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     public void updateLastLogin(UUID userId) {
         jpaUserRepository.updateLastLogin(userId, Instant.now());
     }
+
+    @Override
+    public long countActive() {
+        return jpaUserRepository.countByDeletedAtIsNull();
+    }
 }

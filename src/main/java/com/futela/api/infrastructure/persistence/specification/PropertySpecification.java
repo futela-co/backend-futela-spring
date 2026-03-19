@@ -16,6 +16,15 @@ public final class PropertySpecification {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            // Fetch join relations to avoid N+1 (only for non-count queries)
+            if (query != null && query.getResultType() != Long.class && query.getResultType() != long.class) {
+                root.fetch("owner", jakarta.persistence.criteria.JoinType.LEFT);
+                root.fetch("address", jakarta.persistence.criteria.JoinType.LEFT);
+                root.fetch("category", jakarta.persistence.criteria.JoinType.LEFT);
+                root.fetch("photos", jakarta.persistence.criteria.JoinType.LEFT);
+                query.distinct(true);
+            }
+
             // Only published and not deleted
             predicates.add(cb.isTrue(root.get("isPublished")));
             predicates.add(cb.isNull(root.get("deletedAt")));

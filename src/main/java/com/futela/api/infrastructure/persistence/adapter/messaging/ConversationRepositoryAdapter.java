@@ -3,12 +3,13 @@ package com.futela.api.infrastructure.persistence.adapter.messaging;
 import com.futela.api.domain.model.messaging.Conversation;
 import com.futela.api.domain.port.out.messaging.ConversationRepositoryPort;
 import com.futela.api.infrastructure.persistence.entity.messaging.ConversationEntity;
+import com.futela.api.infrastructure.persistence.entity.property.PropertyEntity;
 import com.futela.api.infrastructure.persistence.mapper.messaging.ConversationPersistenceMapper;
 import com.futela.api.infrastructure.persistence.repository.messaging.JpaConversationRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,13 +19,18 @@ import java.util.UUID;
 public class ConversationRepositoryAdapter implements ConversationRepositoryPort {
 
     private final JpaConversationRepository jpaRepository;
+    private final EntityManager entityManager;
 
     @Override
     public Conversation save(Conversation conversation) {
         ConversationEntity entity = jpaRepository.findById(conversation.id())
                 .orElse(new ConversationEntity());
         entity.setSubject(conversation.subject());
-        entity.setPropertyId(conversation.propertyId());
+        if (conversation.propertyId() != null) {
+            entity.setProperty(entityManager.getReference(PropertyEntity.class, conversation.propertyId()));
+        } else {
+            entity.setProperty(null);
+        }
         entity.setLastMessageAt(conversation.lastMessageAt());
         entity.setArchived(conversation.isArchived());
         return ConversationPersistenceMapper.toDomain(jpaRepository.save(entity));

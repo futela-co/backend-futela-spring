@@ -13,11 +13,13 @@ import java.util.UUID;
 @Repository
 public interface JpaConversationRepository extends JpaRepository<ConversationEntity, UUID> {
 
-    @Query("SELECT c FROM ConversationEntity c JOIN c.participants p WHERE p.id = :userId AND c.deletedAt IS NULL ORDER BY c.lastMessageAt DESC NULLS LAST")
+    @Query("SELECT DISTINCT c FROM ConversationEntity c LEFT JOIN FETCH c.participants LEFT JOIN FETCH c.property JOIN c.participants p WHERE p.id = :userId AND c.deletedAt IS NULL ORDER BY c.lastMessageAt DESC NULLS LAST")
     List<ConversationEntity> findByParticipantId(@Param("userId") UUID userId);
 
     @Query("""
         SELECT c FROM ConversationEntity c
+        LEFT JOIN FETCH c.participants
+        LEFT JOIN FETCH c.property
         JOIN c.participants p1
         JOIN c.participants p2
         WHERE p1.id = :user1Id AND p2.id = :user2Id
@@ -27,10 +29,12 @@ public interface JpaConversationRepository extends JpaRepository<ConversationEnt
 
     @Query("""
         SELECT c FROM ConversationEntity c
+        LEFT JOIN FETCH c.participants
+        LEFT JOIN FETCH c.property
         JOIN c.participants p1
         JOIN c.participants p2
         WHERE p1.id = :user1Id AND p2.id = :user2Id
-        AND c.propertyId = :propertyId
+        AND c.property.id = :propertyId
         AND c.deletedAt IS NULL
     """)
     Optional<ConversationEntity> findByParticipantsAndProperty(
@@ -40,10 +44,13 @@ public interface JpaConversationRepository extends JpaRepository<ConversationEnt
     );
 
     @Query("""
-        SELECT c FROM ConversationEntity c JOIN c.participants p
+        SELECT DISTINCT c FROM ConversationEntity c
+        LEFT JOIN FETCH c.participants
+        LEFT JOIN FETCH c.property
+        JOIN c.participants p
         WHERE p.id = :userId AND c.deletedAt IS NULL
         AND (:query IS NULL OR LOWER(c.subject) LIKE LOWER(CONCAT('%', :query, '%')))
-        AND (:propertyId IS NULL OR c.propertyId = :propertyId)
+        AND (:propertyId IS NULL OR c.property.id = :propertyId)
         AND (:includeArchived = true OR c.isArchived = false)
         ORDER BY c.lastMessageAt DESC NULLS LAST
     """)

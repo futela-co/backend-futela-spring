@@ -5,6 +5,7 @@ import com.futela.api.domain.model.payment.Transaction;
 import com.futela.api.domain.port.out.payment.TransactionRepositoryPort;
 import com.futela.api.infrastructure.persistence.entity.payment.TransactionEntity;
 import com.futela.api.infrastructure.persistence.mapper.payment.TransactionMapper;
+import com.futela.api.infrastructure.persistence.mapper.property.PropertyPersistenceMapper;
 import com.futela.api.infrastructure.persistence.repository.payment.JpaTransactionRepository;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +40,7 @@ public class TransactionRepositoryAdapter implements TransactionRepositoryPort {
         entity.setPhoneNumber(transaction.phoneNumber());
         entity.setProvider(transaction.provider());
         entity.setDescription(transaction.description());
-        entity.setMetadata(transaction.metadata());
+        entity.setMetadata(PropertyPersistenceMapper.mapToJsonNode(transaction.metadata()));
         entity.setFailureReason(transaction.failureReason());
         entity.setProcessedAt(transaction.processedAt());
         return TransactionMapper.toDomain(jpaRepository.save(entity));
@@ -82,5 +83,10 @@ public class TransactionRepositoryAdapter implements TransactionRepositoryPort {
     public List<Transaction> findByUserIdAndStatus(UUID userId, TransactionStatus status) {
         return jpaRepository.findByUserIdAndStatusAndDeletedAtIsNull(userId, status).stream()
                 .map(TransactionMapper::toDomain).toList();
+    }
+
+    @Override
+    public long countActive() {
+        return jpaRepository.countByDeletedAtIsNull();
     }
 }
