@@ -47,4 +47,10 @@ public class CategoryController {
             @Valid @RequestBody UpdateCategoryRequest request) {
         return ApiResponse.success(categoryService.updateCategory(id, request), "Catégorie modifiée avec succès");
     }
+
+    @DeleteMapping("/admin/categories/{id}")
+    public ApiResponse<Void> deleteCategory(@PathVariable UUID id) {
+        categoryService.deleteCategory(id);
+        return ApiResponse.success(null, "Catégorie supprimée avec succès");
+    }
 }
