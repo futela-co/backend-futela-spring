@@ -19,6 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.futela.api.application.service.SecurityService;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,10 +32,12 @@ public class PropertyController {
 
     private final PropertyUseCaseService propertyService;
     private final PhotoUseCaseService photoService;
+    private final SecurityService securityService;
 
-    public PropertyController(PropertyUseCaseService propertyService, PhotoUseCaseService photoService) {
+    public PropertyController(PropertyUseCaseService propertyService, PhotoUseCaseService photoService, SecurityService securityService) {
         this.propertyService = propertyService;
         this.photoService = photoService;
+        this.securityService = securityService;
     }
 
     @GetMapping
@@ -88,19 +92,16 @@ public class PropertyController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<PropertyResponse> createProperty(
-            @Valid @RequestBody CreatePropertyRequest request,
-            @RequestParam UUID ownerId,
-            @RequestParam UUID companyId) {
-        return ApiResponse.success(propertyService.createProperty(request, ownerId, companyId),
+            @Valid @RequestBody CreatePropertyRequest request) {
+        return ApiResponse.success(propertyService.createProperty(request, securityService.getCurrentUserId(), securityService.getCurrentCompanyId()),
                 "Propriété créée avec succès");
     }
 
     @PutMapping("/{id}")
     public ApiResponse<PropertyResponse> updateProperty(
             @PathVariable UUID id,
-            @Valid @RequestBody UpdatePropertyRequest request,
-            @RequestParam UUID ownerId) {
-        return ApiResponse.success(propertyService.updateProperty(id, request, ownerId),
+            @Valid @RequestBody UpdatePropertyRequest request) {
+        return ApiResponse.success(propertyService.updateProperty(id, request, securityService.getCurrentUserId()),
                 "Propriété modifiée avec succès");
     }
 
@@ -111,19 +112,27 @@ public class PropertyController {
     }
 
     @PostMapping("/{id}/publish")
-    public ApiResponse<PropertyResponse> publishProperty(
-            @PathVariable UUID id,
-            @RequestParam UUID ownerId) {
-        return ApiResponse.success(propertyService.publishProperty(id, ownerId),
+    public ApiResponse<PropertyResponse> publishProperty(@PathVariable UUID id) {
+        return ApiResponse.success(propertyService.publishProperty(id, securityService.getCurrentUserId()),
                 "Propriété publiée avec succès");
     }
 
     @PostMapping("/{id}/unpublish")
-    public ApiResponse<PropertyResponse> unpublishProperty(
-            @PathVariable UUID id,
-            @RequestParam UUID ownerId) {
-        return ApiResponse.success(propertyService.unpublishProperty(id, ownerId),
+    public ApiResponse<PropertyResponse> unpublishProperty(@PathVariable UUID id) {
+        return ApiResponse.success(propertyService.unpublishProperty(id, securityService.getCurrentUserId()),
                 "Propriété dépubliée avec succès");
+    }
+
+    @PostMapping("/{id}/soft-delete")
+    public ApiResponse<Void> softDeleteProperty(@PathVariable UUID id) {
+        propertyService.softDeleteProperty(id, securityService.getCurrentUserId());
+        return ApiResponse.success(null, "Propriété supprimée avec succès");
+    }
+
+    @PostMapping("/{id}/restore")
+    public ApiResponse<Void> restoreProperty(@PathVariable UUID id) {
+        propertyService.restoreProperty(id, securityService.getCurrentUserId());
+        return ApiResponse.success(null, "Propriété restaurée avec succès");
     }
 
     // Symfony: POST /properties/{id}/contact
@@ -142,8 +151,7 @@ public class PropertyController {
     public ApiResponse<PhotoResponse> uploadPhoto(
             @PathVariable UUID id,
             @RequestParam("file") MultipartFile file,
-            @RequestParam(required = false) String caption,
-            @RequestParam UUID ownerId) throws IOException {
+            @RequestParam(required = false) String caption) throws IOException {
 
         if (file.getSize() > 5 * 1024 * 1024) {
             throw new com.futela.api.domain.exception.InvalidOperationException(
@@ -152,7 +160,7 @@ public class PropertyController {
 
         return ApiResponse.success(
                 photoService.uploadPhoto(id, file.getInputStream(), file.getOriginalFilename(),
-                        file.getContentType(), caption, ownerId),
+                        file.getContentType(), caption, securityService.getCurrentUserId()),
                 "Photo uploadée avec succès");
     }
 
@@ -160,26 +168,23 @@ public class PropertyController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePhoto(
             @PathVariable UUID id,
-            @PathVariable UUID photoId,
-            @RequestParam UUID ownerId) {
-        photoService.deletePhoto(id, photoId, ownerId);
+            @PathVariable UUID photoId) {
+        photoService.deletePhoto(id, photoId, securityService.getCurrentUserId());
     }
 
     @PatchMapping("/{id}/photos/{photoId}/primary")
     public ApiResponse<PhotoResponse> setPrimaryPhoto(
             @PathVariable UUID id,
-            @PathVariable UUID photoId,
-            @RequestParam UUID ownerId) {
-        return ApiResponse.success(photoService.setPrimaryPhoto(id, photoId, ownerId),
+            @PathVariable UUID photoId) {
+        return ApiResponse.success(photoService.setPrimaryPhoto(id, photoId, securityService.getCurrentUserId()),
                 "Photo principale définie avec succès");
     }
 
     @PutMapping("/{id}/photos/reorder")
     public ApiResponse<List<PhotoResponse>> reorderPhotos(
             @PathVariable UUID id,
-            @Valid @RequestBody ReorderPhotosRequest request,
-            @RequestParam UUID ownerId) {
-        return ApiResponse.success(photoService.reorderPhotos(id, request.photoIds(), ownerId),
+            @Valid @RequestBody ReorderPhotosRequest request) {
+        return ApiResponse.success(photoService.reorderPhotos(id, request.photoIds(), securityService.getCurrentUserId()),
                 "Photos réordonnées avec succès");
     }
 }

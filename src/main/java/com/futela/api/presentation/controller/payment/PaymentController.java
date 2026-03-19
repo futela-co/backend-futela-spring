@@ -3,10 +3,13 @@ package com.futela.api.presentation.controller.payment;
 import com.futela.api.application.dto.request.payment.InitiatePaymentRequest;
 import com.futela.api.application.dto.request.payment.RefundPaymentRequest;
 import com.futela.api.application.dto.response.common.ApiResponse;
+import com.futela.api.application.dto.response.common.PagedResponse;
 import com.futela.api.application.dto.response.payment.TransactionResponse;
 import com.futela.api.domain.port.in.payment.*;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import com.futela.api.application.service.SecurityService;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,26 +22,39 @@ public class PaymentController {
     private final GetTransactionByIdUseCase getTransactionByIdUseCase;
     private final GetUserTransactionsUseCase getUserTransactionsUseCase;
     private final GetPendingTransactionsUseCase getPendingTransactionsUseCase;
+    private final GetAllTransactionsUseCase getAllTransactionsUseCase;
     private final CancelPaymentUseCase cancelPaymentUseCase;
     private final RefundPaymentUseCase refundPaymentUseCase;
+    private final SecurityService securityService;
 
     public PaymentController(InitiatePaymentUseCase initiatePaymentUseCase,
                              GetTransactionByIdUseCase getTransactionByIdUseCase,
                              GetUserTransactionsUseCase getUserTransactionsUseCase,
                              GetPendingTransactionsUseCase getPendingTransactionsUseCase,
+                             GetAllTransactionsUseCase getAllTransactionsUseCase,
                              CancelPaymentUseCase cancelPaymentUseCase,
-                             RefundPaymentUseCase refundPaymentUseCase) {
+                             RefundPaymentUseCase refundPaymentUseCase,
+                             SecurityService securityService) {
         this.initiatePaymentUseCase = initiatePaymentUseCase;
         this.getTransactionByIdUseCase = getTransactionByIdUseCase;
         this.getUserTransactionsUseCase = getUserTransactionsUseCase;
         this.getPendingTransactionsUseCase = getPendingTransactionsUseCase;
+        this.getAllTransactionsUseCase = getAllTransactionsUseCase;
         this.cancelPaymentUseCase = cancelPaymentUseCase;
         this.refundPaymentUseCase = refundPaymentUseCase;
+        this.securityService = securityService;
     }
 
     @PostMapping("/payments/initiate")
     public ApiResponse<TransactionResponse> initiate(@Valid @RequestBody InitiatePaymentRequest request) {
         return ApiResponse.success(initiatePaymentUseCase.execute(request), "Paiement initié avec succès");
+    }
+
+    @GetMapping("/transactions")
+    public ApiResponse<PagedResponse<TransactionResponse>> getAll(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "20") int size) {
+        return ApiResponse.success(getAllTransactionsUseCase.execute(page, size));
     }
 
     @GetMapping("/transactions/{id}")
@@ -47,8 +63,8 @@ public class PaymentController {
     }
 
     @GetMapping("/transactions/my")
-    public ApiResponse<List<TransactionResponse>> getMyTransactions(@RequestParam UUID userId) {
-        return ApiResponse.success(getUserTransactionsUseCase.execute(userId));
+    public ApiResponse<List<TransactionResponse>> getMyTransactions() {
+        return ApiResponse.success(getUserTransactionsUseCase.execute(securityService.getCurrentUserId()));
     }
 
     @GetMapping("/transactions/pending")

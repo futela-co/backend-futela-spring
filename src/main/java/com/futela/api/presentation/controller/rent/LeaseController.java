@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import com.futela.api.application.service.SecurityService;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +26,7 @@ public class LeaseController {
     private final GetActiveLeasesUseCase getActiveLeasesUseCase;
     private final RenewLeaseUseCase renewLeaseUseCase;
     private final TerminateLeaseUseCase terminateLeaseUseCase;
+    private final SecurityService securityService;
 
     public LeaseController(CreateLeaseUseCase createLeaseUseCase,
                            GetLeaseByIdUseCase getLeaseByIdUseCase,
@@ -31,7 +34,8 @@ public class LeaseController {
                            GetTenantLeasesUseCase getTenantLeasesUseCase,
                            GetActiveLeasesUseCase getActiveLeasesUseCase,
                            RenewLeaseUseCase renewLeaseUseCase,
-                           TerminateLeaseUseCase terminateLeaseUseCase) {
+                           TerminateLeaseUseCase terminateLeaseUseCase,
+                           SecurityService securityService) {
         this.createLeaseUseCase = createLeaseUseCase;
         this.getLeaseByIdUseCase = getLeaseByIdUseCase;
         this.getLandlordLeasesUseCase = getLandlordLeasesUseCase;
@@ -39,6 +43,7 @@ public class LeaseController {
         this.getActiveLeasesUseCase = getActiveLeasesUseCase;
         this.renewLeaseUseCase = renewLeaseUseCase;
         this.terminateLeaseUseCase = terminateLeaseUseCase;
+        this.securityService = securityService;
     }
 
     @PostMapping
@@ -53,13 +58,13 @@ public class LeaseController {
     }
 
     @GetMapping("/landlord")
-    public ApiResponse<List<LeaseResponse>> getLandlordLeases(@RequestParam UUID landlordId) {
-        return ApiResponse.success(getLandlordLeasesUseCase.execute(landlordId));
+    public ApiResponse<List<LeaseResponse>> getLandlordLeases() {
+        return ApiResponse.success(getLandlordLeasesUseCase.execute(securityService.getCurrentUserId()));
     }
 
     @GetMapping("/tenant")
-    public ApiResponse<List<LeaseResponse>> getTenantLeases(@RequestParam UUID tenantId) {
-        return ApiResponse.success(getTenantLeasesUseCase.execute(tenantId));
+    public ApiResponse<List<LeaseResponse>> getTenantLeases() {
+        return ApiResponse.success(getTenantLeasesUseCase.execute(securityService.getCurrentUserId()));
     }
 
     @GetMapping("/active")

@@ -11,7 +11,7 @@ import com.futela.api.domain.exception.ValidationException;
 import com.futela.api.domain.port.in.reservation.CreateReservationUseCase;
 import com.futela.api.infrastructure.persistence.entity.property.PropertyEntity;
 import com.futela.api.infrastructure.persistence.entity.reservation.ReservationEntity;
-import com.futela.api.infrastructure.persistence.entity.user.UserEntity;
+import com.futela.api.infrastructure.persistence.entity.auth.UserEntity;
 import com.futela.api.infrastructure.persistence.repository.reservation.JpaReservationRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
